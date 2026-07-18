@@ -1,6 +1,6 @@
 services:
   # ── MySQL Database Service ──────────────────────────────────────────────────
-  - type: pserv
+  - type: web
     name: db
     runtime: docker
     dockerContext: ./database

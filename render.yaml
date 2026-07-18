@@ -72,3 +72,9 @@ services:
     dockerContext: ./frontend
     dockerfilePath: frontend/Dockerfile
     plan: free
+    envVars:
+      - key: BACKEND_HOST
+        fromService:
+          name: backend
+          type: web
+          property: host

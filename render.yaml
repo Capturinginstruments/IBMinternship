@@ -4,7 +4,7 @@ services:
     name: db
     runtime: docker
     dockerContext: ./database
-    dockerfilePath: Dockerfile
+    dockerfilePath: database/Dockerfile
     plan: free
     # Exposed ports on Render: Web services must listen on a port and Render handles HTTP routing.
     # To run MySQL on Render's free tier, we expose it. Since it is private to the blueprint,
@@ -24,7 +24,7 @@ services:
     name: backend
     runtime: docker
     dockerContext: ./backend
-    dockerfilePath: Dockerfile
+    dockerfilePath: backend/Dockerfile
     plan: free
     envVars:
       - key: SPRING_DATASOURCE_URL
@@ -70,5 +70,5 @@ services:
     name: frontend
     runtime: docker
     dockerContext: ./frontend
-    dockerfilePath: Dockerfile
+    dockerfilePath: frontend/Dockerfile
     plan: free

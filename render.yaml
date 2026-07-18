@@ -1,0 +1,74 @@
+services:
+  # ── MySQL Database Service ──────────────────────────────────────────────────
+  - type: web
+    name: db
+    runtime: docker
+    dockerContext: ./database
+    dockerfilePath: Dockerfile
+    plan: free
+    # Exposed ports on Render: Web services must listen on a port and Render handles HTTP routing.
+    # To run MySQL on Render's free tier, we expose it. Since it is private to the blueprint,
+    # other services can access it at http://db:3306.
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        value: root123
+      - key: MYSQL_DATABASE
+        value: farmer_assistant
+      - key: MYSQL_USER
+        value: farmer
+      - key: MYSQL_PASSWORD
+        value: farmer123
+
+  # ── Spring Boot Backend Service ─────────────────────────────────────────────
+  - type: web
+    name: backend
+    runtime: docker
+    dockerContext: ./backend
+    dockerfilePath: Dockerfile
+    plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:mysql://db:3306/farmer_assistant?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true
+      - key: SPRING_DATASOURCE_USERNAME
+        value: farmer
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: farmer123
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION
+        value: "86400000"
+      - key: JWT_REFRESH_EXPIRATION
+        value: "604800000"
+      # Credentials (configured via Render dashboard or environment)
+      - key: OPENWEATHER_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: HUGGINGFACE_API_KEY
+        sync: false
+      - key: AWS_ACCESS_KEY
+        sync: false
+      - key: AWS_SECRET_KEY
+        sync: false
+      - key: AWS_S3_BUCKET
+        value: farmer-assistant-images
+      - key: AWS_REGION
+        value: ap-south-1
+      - key: SPRING_MAIL_HOST
+        value: smtp.gmail.com
+      - key: SPRING_MAIL_PORT
+        value: "587"
+      - key: SPRING_MAIL_USERNAME
+        sync: false
+      - key: SPRING_MAIL_PASSWORD
+        sync: false
+      - key: DATA_GOV_IN_API_KEY
+        sync: false
+
+  # ── React Frontend Service ──────────────────────────────────────────────────
+  - type: web
+    name: frontend
+    runtime: docker
+    dockerContext: ./frontend
+    dockerfilePath: Dockerfile
+    plan: free

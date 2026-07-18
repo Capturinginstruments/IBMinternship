@@ -1,0 +1,191 @@
+# ============================================================
+# AI FARMER ASSISTANT — SPRING BOOT CONFIGURATION
+# application.yml (base profile — shared settings)
+# ============================================================
+
+spring:
+  application:
+    name: AI Farmer Assistant
+
+  # ── Active Profile ────────────────────────────────────────
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # ── DataSource ────────────────────────────────────────────
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/farmer_assistant?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true&characterEncoding=UTF-8}
+    username: ${SPRING_DATASOURCE_USERNAME:farmer}
+    password: ${SPRING_DATASOURCE_PASSWORD:farmer123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: FarmerHikariPool
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
+
+  # ── JPA / Hibernate ───────────────────────────────────────
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        jdbc:
+          time_zone: Asia/Kolkata
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+    open-in-view: false
+
+  # ── Multipart (File Upload) ───────────────────────────────
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 12MB
+      file-size-threshold: 2KB
+
+  # ── Mail ─────────────────────────────────────────────────
+  mail:
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+    default-encoding: UTF-8
+
+  # ── Cache ─────────────────────────────────────────────────
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=600s
+    cache-names:
+      - weather
+      - marketPrices
+      - schemes
+
+  # ── Jackson ───────────────────────────────────────────────
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: NON_NULL
+    time-zone: Asia/Kolkata
+
+# ── Server ─────────────────────────────────────────────────
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+    min-response-size: 1024
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+# ── JWT Configuration ──────────────────────────────────────
+jwt:
+  secret: ${JWT_SECRET:dGhpcylzLWEtdmVyeS1sb25nLWFuZC1zZWN1cmUtc2VjcmV0LWtleS1mb3ItZmFybWVyLWFzc2lzdGFudC0yMDI1}
+  access-token-expiry: ${JWT_EXPIRATION:86400000}
+  refresh-token-expiry: ${JWT_REFRESH_EXPIRATION:604800000}
+
+# ── Gemini AI ─────────────────────────────────────────────
+gemini:
+  api:
+    key: ${GEMINI_API_KEY:}
+    base-url: https://generativelanguage.googleapis.com/v1beta
+    model: gemini-1.5-flash
+    timeout: 60
+
+# ── OpenWeatherMap ────────────────────────────────────────
+openweather:
+  api:
+    key: ${OPENWEATHER_API_KEY:}
+    base-url: https://api.openweathermap.org/data/2.5
+
+# ── HuggingFace ──────────────────────────────────────────
+huggingface:
+  api:
+    key: ${HUGGINGFACE_API_KEY:}
+    base-url: https://api-inference.huggingface.co/models
+    plant-disease-model: linkanjarad/plant-disease-47-classes
+
+# ── AWS S3 ────────────────────────────────────────────────
+aws:
+  access-key: ${AWS_ACCESS_KEY:}
+  secret-key: ${AWS_SECRET_KEY:}
+  region: ${AWS_REGION:ap-south-1}
+  s3:
+    bucket: ${AWS_S3_BUCKET:farmer-assistant-images}
+
+# ── data.gov.in Market Prices ─────────────────────────────
+datagovin:
+  api:
+    key: ${DATA_GOV_IN_API_KEY:}
+    base-url: https://api.data.gov.in/resource
+
+# ── Frontend URL ──────────────────────────────────────────
+app:
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
+
+# ── Actuator ──────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+  info:
+    env:
+      enabled: false
+    java:
+      enabled: false
+    os:
+      enabled: false
+
+# ── OpenAPI / Swagger ──────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: ${SWAGGER_ENABLED:true}
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: ${SWAGGER_ENABLED:true}
+    operationsSorter: method
+    tagsSorter: alpha
+
+# ── Logging ───────────────────────────────────────────────
+logging:
+  level:
+    root: INFO
+    com.farmerassistant: DEBUG
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

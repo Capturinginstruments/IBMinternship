@@ -1,0 +1,16 @@
+# ============================================================
+# DEV PROFILE Configuration
+# ============================================================
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+logging:
+  level:
+    root: INFO
+    com.farmerassistant: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE

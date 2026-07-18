@@ -1,0 +1,53 @@
+# ─── Java / Spring Boot ────────────────────────────────────────────────────────
+**/target/
+**/target-eclipse/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+.classpath
+.project
+.settings/
+.factorypath
+.springBeans
+.recommenders/
+dependency-reduced-pom.xml
+
+# ─── React / Node.js ───────────────────────────────────────────────────────────
+**/node_modules/
+**/dist/
+**/.cache/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/.pnpm-debug.log*
+.eslintcache
+
+# ─── OS / Editors ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*~
+
+# ─── Environment / Secrets ────────────────────────────────────────────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.example
+
+# ─── Miscellaneous ─────────────────────────────────────────────────────────────
+maven-bin/
+maven.zip
+.agents/
+.system_generated/
+scratch/

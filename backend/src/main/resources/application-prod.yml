@@ -1,0 +1,38 @@
+# ============================================================
+# PROD PROFILE Configuration
+# ============================================================
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  datasource:
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+
+logging:
+  level:
+    root: WARN
+    com.farmerassistant: INFO
+    org.hibernate.SQL: ERROR
+  file:
+    name: logs/farmer-assistant.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+      roles: ADMIN
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

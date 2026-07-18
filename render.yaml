@@ -1,39 +1,14 @@
 services:
-  # ── MySQL Database Service ──────────────────────────────────────────────────
-  - type: web
-    name: farmer-db
-    runtime: docker
-    dockerContext: ./database
-    dockerfilePath: database/Dockerfile
-    plan: free
-    # Exposed ports on Render: Web services must listen on a port and Render handles HTTP routing.
-    # To run MySQL on Render's free tier, we expose it. Since it is private to the blueprint,
-    # other services can access it at http://db:3306.
-    envVars:
-      - key: MYSQL_ROOT_PASSWORD
-        value: root123
-      - key: MYSQL_DATABASE
-        value: farmer_assistant
-      - key: MYSQL_USER
-        value: farmer
-      - key: MYSQL_PASSWORD
-        value: farmer123
-
-  # ── Spring Boot Backend Service ─────────────────────────────────────────────
+  # ── Spring Boot Backend Service (packages MySQL + Java application) ─────────
   - type: web
     name: farmer-backend
     runtime: docker
-    dockerContext: ./backend
+    dockerContext: ./
     dockerfilePath: backend/Dockerfile
     plan: free
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:mysql://${DB_HOST}:3306/farmer_assistant?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true
-      - key: DB_HOST
-        fromService:
-          name: farmer-db
-          type: web
-          property: host
+        value: jdbc:mysql://localhost:3306/farmer_assistant?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true
       - key: SPRING_DATASOURCE_USERNAME
         value: farmer
       - key: SPRING_DATASOURCE_PASSWORD

@@ -38,18 +38,18 @@ public class DiseaseReport {
     private Double confidenceScore;
 
     @Lob
-    @Column(name = "treatment")
+    @Column(name = "treatment", columnDefinition = "LONGTEXT")
     private String treatment;
 
     @Column(name = "medicine")
     private String medicine;
 
     @Lob
-    @Column(name = "prevention")
+    @Column(name = "prevention", columnDefinition = "LONGTEXT")
     private String prevention;
 
     @Lob
-    @Column(name = "gemini_explanation")
+    @Column(name = "gemini_explanation", columnDefinition = "LONGTEXT")
     private String geminiExplanation;
 
     @Column(name = "is_resolved", nullable = false)

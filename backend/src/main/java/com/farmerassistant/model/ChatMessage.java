@@ -30,7 +30,7 @@ public class ChatMessage {
     private ChatRole role;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String message;
 
     @Column(name = "image_url", length = 500)

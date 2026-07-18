@@ -61,11 +61,11 @@ public class CropRecommendation {
     private String waterRequirement;
 
     @Lob
-    @Column(name = "fertilizer_advice")
+    @Column(name = "fertilizer_advice", columnDefinition = "LONGTEXT")
     private String fertilizerAdvice;
 
     @Lob
-    @Column(name = "gemini_explanation")
+    @Column(name = "gemini_explanation", columnDefinition = "LONGTEXT")
     private String geminiExplanation;
 
     @CreationTimestamp

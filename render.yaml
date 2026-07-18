@@ -28,7 +28,12 @@ services:
     plan: free
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:mysql://db:3306/farmer_assistant?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true
+        value: jdbc:mysql://${DB_HOST}:3306/farmer_assistant?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true
+      - key: DB_HOST
+        fromService:
+          name: db
+          type: web
+          property: host
       - key: SPRING_DATASOURCE_USERNAME
         value: farmer
       - key: SPRING_DATASOURCE_PASSWORD

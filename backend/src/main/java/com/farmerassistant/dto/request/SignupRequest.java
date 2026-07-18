@@ -20,12 +20,11 @@ public class SignupRequest {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-             message = "Password must contain uppercase, lowercase, digit and special character")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$",
+             message = "Password must be at least 8 characters and contain uppercase, lowercase, and a digit")
     private String password;
 
-    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Please provide a valid Indian mobile number")
+    @Pattern(regexp = "^(|[6-9]\\d{9})$", message = "Please provide a valid Indian mobile number")
     private String phone;
 
     private User.Role role = User.Role.FARMER;

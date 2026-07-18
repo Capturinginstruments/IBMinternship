@@ -32,7 +32,7 @@ public class GeminiService {
     private String model;
 
     /** Returns true only if key looks like a real Gemini API key (starts with AIza) */
-    private boolean isKeyConfigured() {
+    public boolean isKeyConfigured() {
         return StringUtils.hasText(apiKey) && (apiKey.startsWith("AIza") || apiKey.startsWith("AQ."));
     }
 
@@ -215,55 +215,54 @@ public class GeminiService {
     }
 
     private CropInfo recommendCrop(String season, String soil, double temp, double rainfall, String state) {
-        // Rule-based crop recommendation engine
-        String s = season.toUpperCase();
-        String soil2 = soil.toLowerCase();
+        String s = season != null ? season.toUpperCase() : "RAINY";
+        String soil2 = soil != null ? soil.toLowerCase() : "black";
 
-        if (s.equals("KHARIF")) {
+        if (s.equals("RAINY") || s.equals("KHARIF")) {
             if (rainfall > 800 && temp > 25) {
                 if (soil2.contains("clay") || soil2.contains("alluvial")) {
                     return new CropInfo("Rice", "40-50 quintals/hectare", "₹60,000-75,000/hectare",
                             "1200-2000 mm per season",
                             "Apply 120 kg Urea, 60 kg DAP per hectare. Top dress with 60 kg Urea at tillering and panicle initiation stages.",
-                            "Rice is ideal for Kharif season with clay or alluvial soil and high rainfall (>800mm). The high temperature and adequate moisture create perfect paddy growing conditions.");
+                            "Rice is ideal for Kharif/Rainy season with clay or alluvial soil and high rainfall (>800mm). The high temperature and adequate moisture create perfect paddy growing conditions.");
                 }
                 return new CropInfo("Soybean", "20-25 quintals/hectare", "₹40,000-50,000/hectare",
                         "500-700 mm per season",
                         "Apply 25 kg Urea, 250 kg SSP, 80 kg MOP per hectare. Rhizobium seed treatment is essential.",
-                        "Soybean thrives in Kharif season with moderate rainfall. It fixes atmospheric nitrogen, reducing fertilizer costs and improving soil health for subsequent crops.");
+                        "Soybean thrives in Kharif/Rainy season with moderate rainfall. It fixes atmospheric nitrogen, reducing fertilizer costs and improving soil health for subsequent crops.");
             }
             if (soil2.contains("black") || soil2.contains("cotton")) {
                 return new CropInfo("Cotton", "15-20 quintals/hectare", "₹75,000-1,00,000/hectare",
                         "500-700 mm per season",
                         "Apply 150 kg Urea, 250 kg SSP, 100 kg MOP per hectare. Split Urea application at sowing, 45 and 90 days.",
-                        "Cotton is perfectly suited to black soil in Kharif season. Black soil retains moisture well between rains, and cotton's cash crop value makes it highly profitable for Maharashtra farmers.");
+                        "Cotton is perfectly suited to black soil in Kharif/Rainy season. Black soil retains moisture well between rains, and cotton's cash crop value makes it highly profitable for Maharashtra farmers.");
             }
             return new CropInfo("Maize", "30-35 quintals/hectare", "₹35,000-45,000/hectare",
                     "500-750 mm per season",
                     "Apply 120 kg Urea, 60 kg DAP, 40 kg MOP per hectare in split doses.",
-                    "Maize is a versatile Kharif crop suitable for most soil types with good drainage. It has a short growing period of 90-110 days and provides both grain and fodder.");
+                    "Maize is a versatile Kharif/Rainy crop suitable for most soil types with good drainage. It has a short growing period of 90-110 days and provides both grain and fodder.");
         }
 
-        if (s.equals("RABI")) {
+        if (s.equals("WINTER") || s.equals("RABI")) {
             if (temp < 20 && (soil2.contains("alluvial") || soil2.contains("loamy"))) {
                 return new CropInfo("Wheat", "40-50 quintals/hectare", "₹55,000-70,000/hectare",
                         "400-500 mm per season",
                         "Apply 120 kg Urea, 60 kg DAP, 40 kg MOP per hectare. Irrigate at crown root initiation, tillering, jointing, flowering, and grain filling stages.",
-                        "Wheat is the ideal Rabi crop for alluvial/loamy soils in cooler temperatures. India's most important food crop with assured government procurement at MSP.");
+                        "Wheat is the ideal Rabi/Winter crop for alluvial/loamy soils in cooler temperatures. India's most important food crop with assured government procurement at MSP.");
             }
             if (soil2.contains("black")) {
                 return new CropInfo("Chickpea", "15-20 quintals/hectare", "₹50,000-65,000/hectare",
                         "300-450 mm per season",
                         "Apply 20 kg Urea, 200 kg SSP per hectare. Rhizobium seed treatment boosts yield by 15-20%.",
-                        "Chickpea (Gram) excels in black soil during Rabi with its residual moisture utilization capacity. It fixes nitrogen and improves soil fertility for next season.");
+                        "Chickpea (Gram) excels in black soil during Rabi/Winter with its residual moisture utilization capacity. It fixes nitrogen and improves soil fertility for next season.");
             }
             return new CropInfo("Mustard", "12-15 quintals/hectare", "₹40,000-50,000/hectare",
                     "250-400 mm per season",
                     "Apply 80 kg Urea, 80 kg SSP per hectare. Sulphur application (20 kg/ha) significantly boosts oil content.",
-                    "Mustard is a profitable Rabi oilseed crop that tolerates cool and dry conditions. With oil content of 38-42%, it has excellent market demand.");
+                    "Mustard is a profitable Rabi/Winter oilseed crop that tolerates cool and dry conditions. With oil content of 38-42%, it has excellent market demand.");
         }
 
-        // Default
+        // Default (Summer)
         return new CropInfo("Groundnut", "18-22 quintals/hectare", "₹45,000-60,000/hectare",
                 "400-600 mm per season",
                 "Apply 20 kg Urea, 100 kg SSP, 40 kg MOP per hectare. Gypsum application (500 kg/ha) at pegging stage improves pod filling.",

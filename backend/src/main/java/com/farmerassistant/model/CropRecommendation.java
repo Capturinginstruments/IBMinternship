@@ -73,6 +73,6 @@ public class CropRecommendation {
     private LocalDateTime createdAt;
 
     public enum Season {
-        KHARIF, RABI, ZAID, SUMMER, WINTER
+        SUMMER, WINTER, RAINY
     }
 }

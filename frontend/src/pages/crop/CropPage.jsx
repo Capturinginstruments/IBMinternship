@@ -12,11 +12,11 @@ const STATES = ['Maharashtra','Punjab','Haryana','Uttar Pradesh','Rajasthan','Ma
   'Gujarat','Karnataka','Andhra Pradesh','Telangana','Tamil Nadu','Kerala','West Bengal',
   'Bihar','Odisha','Assam','Himachal Pradesh','Uttarakhand']
 
-const SEASONS = ['KHARIF','RABI','ZAID','SUMMER','WINTER']
+const SEASONS = ['SUMMER','WINTER','RAINY']
 const SOILS   = ['Alluvial','Black','Red','Laterite','Sandy','Clay','Loamy','Silty']
 
 const defaultForm = {
-  state:'Maharashtra', district:'Pune', season:'KHARIF', soilType:'Black',
+  state:'Maharashtra', district:'Pune', season:'RAINY', soilType:'Black',
   nitrogen:80, phosphorus:40, potassium:40, temperature:28, humidity:65, rainfall:700, phLevel:6.5
 }
 

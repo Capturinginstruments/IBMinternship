@@ -29,34 +29,65 @@ public class S3Service {
         String extension = StringUtils.hasText(originalFilename) && originalFilename.contains(".")
                 ? originalFilename.substring(originalFilename.lastIndexOf("."))
                 : ".jpg";
-        String key = folder + "/" + UUID.randomUUID() + extension;
+        String filename = UUID.randomUUID() + extension;
+        String key = folder + "/" + filename;
 
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
-        metadata.setContentLength(file.getSize());
+        try {
+            if (StringUtils.hasText(bucketName) && amazonS3 != null) {
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentType(file.getContentType());
+                metadata.setContentLength(file.getSize());
+                amazonS3.putObject(new PutObjectRequest(bucketName, key, file.getInputStream(), metadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+                return amazonS3.getUrl(bucketName, key).toString();
+            }
+        } catch (Exception e) {
+            log.warn("S3 upload failed, using local storage fallback: {}", e.getMessage());
+        }
 
-        amazonS3.putObject(new PutObjectRequest(bucketName, key, file.getInputStream(), metadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
-
-        String url = amazonS3.getUrl(bucketName, key).toString();
-        log.info("Uploaded file to S3: {}", url);
-        return url;
+        // Local Storage Fallback
+        java.io.File uploadDir = new java.io.File("uploads/" + folder);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+        java.io.File dest = new java.io.File(uploadDir, filename);
+        file.transferTo(dest);
+        return "/api/uploads/" + folder + "/" + filename;
     }
 
     public String uploadBytes(byte[] bytes, String folder, String contentType) {
         String extension = contentType != null && contentType.contains("/")
                 ? "." + contentType.split("/")[1] : ".jpg";
-        String key = folder + "/" + UUID.randomUUID() + extension;
+        String filename = UUID.randomUUID() + extension;
+        String key = folder + "/" + filename;
 
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(contentType);
-        metadata.setContentLength(bytes.length);
+        try {
+            if (StringUtils.hasText(bucketName) && amazonS3 != null) {
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentType(contentType);
+                metadata.setContentLength(bytes.length);
+                java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes);
+                amazonS3.putObject(new PutObjectRequest(bucketName, key, bais, metadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+                return amazonS3.getUrl(bucketName, key).toString();
+            }
+        } catch (Exception e) {
+            log.warn("S3 upload failed, using local storage fallback: {}", e.getMessage());
+        }
 
-        java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes);
-        amazonS3.putObject(new PutObjectRequest(bucketName, key, bais, metadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
-
-        return amazonS3.getUrl(bucketName, key).toString();
+        // Local Storage Fallback
+        try {
+            java.io.File uploadDir = new java.io.File("uploads/" + folder);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            java.io.File dest = new java.io.File(uploadDir, filename);
+            java.nio.file.Files.write(dest.toPath(), bytes);
+            return "/api/uploads/" + folder + "/" + filename;
+        } catch (Exception e) {
+            log.error("Failed to save bytes locally: {}", e.getMessage());
+            return "";
+        }
     }
 
     public void deleteFile(String s3Key) {

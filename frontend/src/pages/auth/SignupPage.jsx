@@ -27,8 +27,8 @@ export default function SignupPage() {
     if (!form.email || !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Valid email required'
     if (form.phone && !/^[6-9]\d{9}$/.test(form.phone)) e.phone = 'Valid 10-digit Indian number'
     if (!form.password || form.password.length < 8) e.password = 'Minimum 8 characters'
-    else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(form.password))
-      e.password = 'Must have uppercase, lowercase, digit and special character'
+    else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(form.password))
+      e.password = 'Must have uppercase, lowercase, and a digit'
     setErrors(e)
     return Object.keys(e).length === 0
   }

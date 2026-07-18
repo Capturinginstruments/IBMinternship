@@ -15,4 +15,4 @@ RUN chown farmer:farmer app.jar
 USER farmer
 EXPOSE 8080
 ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC"
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "echo 'Checking database host: '$DB_HOST; until nc -z -w5 $DB_HOST 3306; do echo 'Database not ready, sleeping 3 seconds...'; sleep 3; done; echo 'Database is ready! Starting backend...'; java $JAVA_OPTS -jar app.jar"]

@@ -54,7 +54,7 @@ public class CropRecommendationServiceTest {
         testRequest = new CropRecommendationRequest();
         testRequest.setState("Maharashtra");
         testRequest.setDistrict("Pune");
-        testRequest.setSeason(com.farmerassistant.model.CropRecommendation.Season.KHARIF);
+        testRequest.setSeason(com.farmerassistant.model.CropRecommendation.Season.RAINY);
         testRequest.setSoilType("Clay");
         testRequest.setNitrogen(40.0);
         testRequest.setPhosphorus(40.0);

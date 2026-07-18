@@ -1,7 +1,7 @@
 services:
   # ── MySQL Database Service ──────────────────────────────────────────────────
   - type: web
-    name: db
+    name: farmer-db
     runtime: docker
     dockerContext: ./database
     dockerfilePath: database/Dockerfile
@@ -21,7 +21,7 @@ services:
 
   # ── Spring Boot Backend Service ─────────────────────────────────────────────
   - type: web
-    name: backend
+    name: farmer-backend
     runtime: docker
     dockerContext: ./backend
     dockerfilePath: backend/Dockerfile
@@ -31,7 +31,7 @@ services:
         value: jdbc:mysql://${DB_HOST}:3306/farmer_assistant?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true
       - key: DB_HOST
         fromService:
-          name: db
+          name: farmer-db
           type: web
           property: host
       - key: SPRING_DATASOURCE_USERNAME
@@ -72,7 +72,7 @@ services:
 
   # ── React Frontend Service ──────────────────────────────────────────────────
   - type: web
-    name: frontend
+    name: farmer-frontend
     runtime: docker
     dockerContext: ./frontend
     dockerfilePath: frontend/Dockerfile
@@ -80,6 +80,6 @@ services:
     envVars:
       - key: BACKEND_HOST
         fromService:
-          name: backend
+          name: farmer-backend
           type: web
           property: host

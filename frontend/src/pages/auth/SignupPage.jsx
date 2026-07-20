@@ -10,6 +10,17 @@ const ROLES = [
   { value: 'OFFICER', label: '🏛️ Agricultural Officer', desc: 'Manage and assist farmers' },
 ]
 
+const Field = ({ id, label, icon: Icon, error, ...props }) => (
+  <div>
+    <label className="label" htmlFor={id}>{label}</label>
+    <div className="relative">
+      {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />}
+      <input id={id} className={`input ${Icon ? 'pl-10' : ''} ${error ? 'input-error' : ''}`} {...props} />
+    </div>
+    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+  </div>
+)
+
 export default function SignupPage() {
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', password: '', role: 'FARMER'
@@ -51,17 +62,6 @@ export default function SignupPage() {
       setLoading(false)
     }
   }
-
-  const Field = ({ id, label, icon: Icon, error, ...props }) => (
-    <div>
-      <label className="label" htmlFor={id}>{label}</label>
-      <div className="relative">
-        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />}
-        <input id={id} className={`input ${Icon ? 'pl-10' : ''} ${error ? 'input-error' : ''}`} {...props} />
-      </div>
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
-    </div>
-  )
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-950">

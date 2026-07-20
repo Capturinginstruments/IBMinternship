@@ -55,7 +55,10 @@ export default function SignupPage() {
       toast.success(`Welcome to AI Farmer Assistant, ${user.firstName}! 🌾`)
       navigate('/dashboard')
     } catch (err) {
-      const msg = err.response?.data?.message || 'Registration failed. Please try again.'
+      const msg = err.response?.data?.message || 
+                  (typeof err.response?.data === 'string' && err.response.data.length < 200 && err.response.data) ||
+                  err.message || 
+                  'Registration failed. Please try again.'
       toast.error(msg)
       setErrors({ form: msg })
     } finally {

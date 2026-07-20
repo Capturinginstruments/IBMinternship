@@ -28,7 +28,7 @@ public class GeminiService {
     @Value("${gemini.api.base-url:https://generativelanguage.googleapis.com/v1beta}")
     private String baseUrl;
 
-    @Value("${gemini.api.model:gemini-1.5-flash}")
+    @Value("${gemini.api.model:gemini-2.0-flash}")
     private String model;
 
     /** Returns true only if key looks like a real Gemini API key (starts with AIza) */
@@ -335,6 +335,72 @@ public class GeminiService {
     private String buildChatResponse(String prompt) {
         String p = prompt.toLowerCase();
 
+        // 1. Rabi/Winter crop recommendations
+        if (p.contains("october") || p.contains("november") || p.contains("december") || p.contains("winter") || p.contains("rabi")) {
+            String stateMsg = "";
+            if (p.contains("maharashtra")) {
+                stateMsg = " In Maharashtra, Chickpea (Gram) and Jowar are highly recommended on black soils, while Wheat is best where irrigation is available.";
+            } else if (p.contains("punjab") || p.contains("haryana")) {
+                stateMsg = " In Punjab/Haryana, Wheat and Mustard are the primary Rabi choices with timely canal or tubewell irrigation.";
+            }
+            return "🌾 **Rabi (Winter) Season Farming Advice**" + stateMsg + "\n\n" +
+                "The cool winter season (sowing from October to December) is ideal for several high-yield crops:\n\n" +
+                "1. **Wheat:** Sown late October to November. Requires 4-5 irrigations at critical stages (especially Crown Root Initiation at 21 days).\n" +
+                "2. **Chickpea (Bengal Gram):** Excellent for dry land and residual moisture. Sown in October/November. Requires minimal water.\n" +
+                "3. **Mustard / Rapeseed:** Highly profitable oilseed. Sown early October. Apply Sulphur (20 kg/ha) to boost oil content.\n" +
+                "4. **Lentils / Peas:** Good nitrogen-fixing pulses for soil replenishment.\n\n" +
+                "**Action Plan:** Get your soil tested before sowing, apply phosphorus as basal dose, and ensure seeds are treated with Trichoderma or Rhizobium.";
+        }
+
+        // 2. Kharif/Rainy crop recommendations
+        if (p.contains("june") || p.contains("july") || p.contains("august") || p.contains("september") || p.contains("rainy") || p.contains("kharif")) {
+            String stateMsg = "";
+            if (p.contains("maharashtra")) {
+                stateMsg = " In Maharashtra, Cotton (Bt Cotton), Soybean, and Tur (Pigeon pea) are highly profitable rainfed options.";
+            } else if (p.contains("punjab") || p.contains("haryana")) {
+                stateMsg = " In Punjab, Paddy (PR-126, Basmati) and Maize are the dominant Kharif crops.";
+            }
+            return "🌧️ **Kharif (Rainy) Season Farming Advice**" + stateMsg + "\n\n" +
+                "The monsoon season (sowing from June to July) is the largest cropping season in India:\n\n" +
+                "1. **Rice (Paddy):** Sown in nursery in June, transplanted in July. Requires standing water (2-5 cm) for the first month.\n" +
+                "2. **Soybean:** Excellent nitrogen-fixing crop. Thrives in well-drained medium loam to clay soils.\n" +
+                "3. **Cotton:** Highly successful cash crop in black soil regions. Requires pest monitoring for Pink Bollworm.\n" +
+                "4. **Maize (Corn):** Versatile crop for grain and green fodder. Needs good soil drainage.\n\n" +
+                "**Action Plan:** Clear drainage channels to prevent waterlogging, treat seeds before sowing, and apply NPK in split doses.";
+        }
+
+        // 3. Zaid/Summer crop recommendations
+        if (p.contains("march") || p.contains("april") || p.contains("may") || p.contains("summer") || p.contains("zaid")) {
+            return "☀️ **Zaid (Summer) Season Farming Advice**\n\n" +
+                "The hot, dry summer season (March to May) is suitable for short-duration crops that require warm weather and constant irrigation:\n\n" +
+                "1. **Groundnut:** Sown in March. Highly profitable oilseed. Use Gypsum (500 kg/ha) at pegging stage.\n" +
+                "2. **Moong Bean (Green Gram):** Short 60-day crop that enriches soil nitrogen.\n" +
+                "3. **Vegetables (Watermelon, Cucumber, Okra/Bhindi):** Highly lucrative and enjoys strong summer demand.\n" +
+                "4. **Fodder Crops (Sorghum, Cowpea):** Essential for livestock during dry summer months.\n\n" +
+                "**Action Plan:** Use drip irrigation or mulching to reduce evaporation losses, and irrigate during early morning or late evening.";
+        }
+
+        // 4. State specific checks (when season is not specified)
+        if (p.contains("maharashtra")) {
+            return "🏛️ **Farming in Maharashtra**\n\n" +
+                "Maharashtra has diverse agro-climatic zones with extensive black cotton soils (Regur):\n\n" +
+                "- **Cash Crops:** Sugarcane (especially western Maharashtra), Cotton, and Turmeric.\n" +
+                "- **Food Grains:** Sorghum (Jowar), Pearl Millet (Bajra), Wheat, and Rice (in coastal Konkan).\n" +
+                "- **Pulses & Oilseeds:** Soybean, Tur (Pigeon Pea), and Gram.\n" +
+                "- **Horticulture:** Nashik (Grapes/Onions), Nagpur (Oranges), Jalgaon (Bananas), and Konkan (Alphonso Mangoes).\n\n" +
+                "**Tip:** Black soils are rich in calcium and magnesium but require careful nitrogen and phosphorus supplementation. Implement drip irrigation for Sugarcane to save water.";
+        }
+
+        if (p.contains("punjab") || p.contains("haryana")) {
+            return "🏛️ **Farming in Punjab & Haryana**\n\n" +
+                "As the granaries of India, Punjab and Haryana feature fertile alluvial soils and extensive canal/tubewell networks:\n\n" +
+                "- **Main Rotation:** Rice-Wheat cropping system is dominant.\n" +
+                "- **Alternative Crops:** Maize, Mustard, Sunflower, and Cotton (in south-western districts).\n" +
+                "- **Key Challenges:** Soil salinity, water table depletion, and crop residue management.\n\n" +
+                "**Tip:** Use laser land leveling to save 20-30% water. Adopt direct-seeded rice (DSR) or short-duration paddy (like PR-126) to conserve groundwater.";
+        }
+
+        // 5. Original crop checks
         if (p.contains("wheat") || p.contains("rabi")) {
             return """
                 🌾 **Wheat Cultivation Guide**
@@ -461,8 +527,6 @@ public class GeminiService {
                 - 🌧️ **Weather-based farming advice**
                 
                 What would you like to know today? Feel free to ask in Hindi, Marathi, or English!
-                
-                *Tip: For the best AI responses, configure a valid Gemini API key.*
                 """;
         }
 
@@ -472,13 +536,12 @@ public class GeminiService {
             I can help you with crop advice, disease management, fertilizer recommendations, government schemes, and market insights.
             
             **Try asking me:**
+            - "What crops should I plant in October in Maharashtra?"
             - "How to grow wheat in Punjab?"
             - "My rice crop has yellow spots, what disease is it?"
             - "What fertilizer should I use for cotton?"
             - "Tell me about PM-KISAN scheme"
             - "Should I sell my wheat now or wait?"
-            
-            *For advanced AI analysis powered by Gemini, please update your API key in the application settings.*
             """;
     }
 

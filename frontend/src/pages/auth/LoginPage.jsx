@@ -33,7 +33,10 @@ export default function LoginPage() {
       toast.success(`Welcome back, ${user.firstName}! 🌾`)
       navigate('/dashboard')
     } catch (err) {
-      const msg = err.response?.data?.message || 'Invalid email or password'
+      const msg = err.response?.data?.message || 
+                  (typeof err.response?.data === 'string' && err.response.data.length < 200 && err.response.data) ||
+                  err.message || 
+                  'Invalid email or password'
       toast.error(msg)
       setErrors({ form: msg })
     } finally {

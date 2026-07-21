@@ -54,7 +54,7 @@ EOF\n\
 # Initialize MySQL if the data directory is empty\n\
 if [ ! -d "/app/mysql/data/mysql" ]; then\n\
     echo "Initializing MySQL data directory..."\n\
-    if ! /usr/sbin/mysqld --defaults-file=/app/mysql/my.cnf --no-defaults --initialize-insecure --user=$(id -u); then\n\
+    if ! /usr/sbin/mysqld --defaults-file=/app/mysql/my.cnf --initialize-insecure --user=$(id -u); then\n\
         echo "ERROR: MySQL initialization failed!"\n\
         cat /app/mysql/mysql.err\n\
         exit 1\n\
@@ -62,7 +62,7 @@ if [ ! -d "/app/mysql/data/mysql" ]; then\n\
 fi\n\
 \n\
 echo "Starting MySQL..."\n\
-/usr/sbin/mysqld --defaults-file=/app/mysql/my.cnf --no-defaults --user=$(id -u) &\n\
+/usr/sbin/mysqld --defaults-file=/app/mysql/my.cnf --user=$(id -u) &\n\
 \n\
 # Wait for MySQL to start up\n\
 echo "Waiting for MySQL to start..."\n\

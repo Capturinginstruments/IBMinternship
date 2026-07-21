@@ -54,7 +54,4 @@ services:
     plan: free
     envVars:
       - key: BACKEND_HOST
-        fromService:
-          name: farmer-backend
-          type: web
-          property: host
+        value: farmer-backend

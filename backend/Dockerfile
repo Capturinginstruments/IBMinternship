@@ -54,16 +54,16 @@ EOF\n\
 # Initialize MySQL if the data directory is empty\n\
 if [ ! -d "/app/mysql/data/mysql" ]; then\n\
     echo "Initializing MySQL data directory..."\n\
-    mysqld --defaults-file=/app/mysql/my.cnf --initialize-insecure\n\
+    /usr/sbin/mysqld --no-defaults --defaults-file=/app/mysql/my.cnf --initialize-insecure\n\
 fi\n\
 \n\
 echo "Starting MySQL..."\n\
-mysqld --defaults-file=/app/mysql/my.cnf &\n\
+/usr/sbin/mysqld --no-defaults --defaults-file=/app/mysql/my.cnf &\n\
 \n\
 # Wait for MySQL to start up\n\
 echo "Waiting for MySQL to start..."\n\
 for i in {1..30}; do\n\
-    if mysqladmin --socket=/app/mysql/mysql.sock ping >/dev/null 2>&1; then\n\
+    if /usr/bin/mysqladmin --socket=/app/mysql/mysql.sock ping >/dev/null 2>&1; then\n\
         echo "MySQL is running!"\n\
         break\n\
     fi\n\
@@ -71,18 +71,18 @@ for i in {1..30}; do\n\
 done\n\
 \n\
 # Initialize database schema and seeds if not already done\n\
-if ! mysql --socket=/app/mysql/mysql.sock -e "use farmer_assistant;" >/dev/null 2>&1; then\n\
+if ! /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "use farmer_assistant;" >/dev/null 2>&1; then\n\
     echo "Creating database and user..."\n\
-    mysql --socket=/app/mysql/mysql.sock -e "CREATE DATABASE farmer_assistant;"\n\
-    mysql --socket=/app/mysql/mysql.sock -e "CREATE USER '\''farmer'\''@'\''localhost'\'' IDENTIFIED BY '\''farmer123'\'';"\n\
-    mysql --socket=/app/mysql/mysql.sock -e "GRANT ALL PRIVILEGES ON farmer_assistant.* TO '\''farmer'\''@'\''localhost'\'';"\n\
-    mysql --socket=/app/mysql/mysql.sock -e "FLUSH PRIVILEGES;"\n\
+    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "CREATE DATABASE farmer_assistant;"\n\
+    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "CREATE USER '\''farmer'\''@'\''localhost'\'' IDENTIFIED BY '\''farmer123'\'';"\n\
+    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "GRANT ALL PRIVILEGES ON farmer_assistant.* TO '\''farmer'\''@'\''localhost'\'';"\n\
+    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "FLUSH PRIVILEGES;"\n\
 \n\
     echo "Importing schema..."\n\
-    mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/schema.sql\n\
+    /usr/bin/mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/schema.sql\n\
     echo "Importing seeds..."\n\
-    mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed.sql\n\
-    mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed_market_prices.sql\n\
+    /usr/bin/mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed.sql\n\
+    /usr/bin/mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed_market_prices.sql\n\
     echo "Database initialization complete!"\n\
 fi\n\
 \n\

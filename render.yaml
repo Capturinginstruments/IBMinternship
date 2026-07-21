@@ -54,4 +54,4 @@ services:
     plan: free
     envVars:
       - key: BACKEND_HOST
-        value: farmer-backend
+        value: http://farmer-backend:8080

@@ -100,7 +100,7 @@ export SPRING_DATASOURCE_URL="jdbc:mysql://localhost:3306/farmer_assistant?useSS
 export SPRING_DATASOURCE_USERNAME="farmer"
 export SPRING_DATASOURCE_PASSWORD="farmer123"
 
-exec java -Xms128m -Xmx256m -XX:MaxMetaspaceSize=64m -XX:+UseSerialGC -jar app.jar
+exec java -Xms64m -Xmx200m -XX:MaxMetaspaceSize=64m -XX:+UseSerialGC -jar app.jar
 ' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 # Ensure the /app directory has correct permissions

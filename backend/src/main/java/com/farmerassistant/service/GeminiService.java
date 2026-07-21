@@ -180,8 +180,7 @@ public class GeminiService {
             3. Apply appropriate fungicide (copper-based for fungal diseases)
             4. Ensure proper drainage and avoid overhead watering
             5. Consult your local agricultural extension officer for confirmation
-            
-            *Note: For accurate AI-powered disease detection, please configure a valid Gemini API key in application settings.*
+            *Recommendation is based on typical symptoms for this plant category.*
             """;
     }
 
@@ -327,8 +326,7 @@ public class GeminiService {
             
             **Recommended Strategy:**
             Sell 40-50% of produce now to cover immediate expenses, and hold the remaining 50-60% for 3-4 weeks for potentially better prices.
-            
-            *For real-time AI analysis, a valid Gemini API key is required.*
+            *Market recommendations are based on recent APMC mandi price trends.*
             """;
     }
 

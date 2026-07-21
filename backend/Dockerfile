@@ -72,7 +72,7 @@ echo "Starting MySQL..."\n\
 # Wait for MySQL to start up\n\
 echo "Waiting for MySQL to start..."\n\
 for i in {1..30}; do\n\
-    if /usr/bin/mysqladmin --socket=/app/mysql/mysql.sock ping >/dev/null 2>&1; then\n\
+    if /usr/bin/mysqladmin -u root --socket=/app/mysql/mysql.sock ping >/dev/null 2>&1; then\n\
         echo "MySQL is running!"\n\
         break\n\
     fi\n\
@@ -80,18 +80,18 @@ for i in {1..30}; do\n\
 done\n\
 \n\
 # Initialize database schema and seeds if not already done\n\
-if ! /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "use farmer_assistant;" >/dev/null 2>&1; then\n\
+if ! /usr/bin/mysql -u root --socket=/app/mysql/mysql.sock -e "use farmer_assistant;" >/dev/null 2>&1; then\n\
     echo "Creating database and user..."\n\
-    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "CREATE DATABASE farmer_assistant;"\n\
-    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "CREATE USER '\''farmer'\''@'\''%'\'' IDENTIFIED BY '\''farmer123'\'';"\n\
-    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "GRANT ALL PRIVILEGES ON farmer_assistant.* TO '\''farmer'\''@'\''%'\'';"\n\
-    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "FLUSH PRIVILEGES;"\n\
+    /usr/bin/mysql -u root --socket=/app/mysql/mysql.sock -e "CREATE DATABASE farmer_assistant;"\n\
+    /usr/bin/mysql -u root --socket=/app/mysql/mysql.sock -e "CREATE USER '\''farmer'\''@'\''%'\'' IDENTIFIED BY '\''farmer123'\'';"\n\
+    /usr/bin/mysql -u root --socket=/app/mysql/mysql.sock -e "GRANT ALL PRIVILEGES ON farmer_assistant.* TO '\''farmer'\''@'\''%'\'';"\n\
+    /usr/bin/mysql -u root --socket=/app/mysql/mysql.sock -e "FLUSH PRIVILEGES;"\n\
 \n\
     echo "Importing schema..."\n\
-    /usr/bin/mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/schema.sql\n\
+    /usr/bin/mysql -u root --socket=/app/mysql/mysql.sock farmer_assistant < /app/schema.sql\n\
     echo "Importing seeds..."\n\
-    /usr/bin/mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed.sql\n\
-    /usr/bin/mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed_market_prices.sql\n\
+    /usr/bin/mysql -u root --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed.sql\n\
+    /usr/bin/mysql -u root --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed_market_prices.sql\n\
     echo "Database initialization complete!"\n\
 fi\n\
 \n\

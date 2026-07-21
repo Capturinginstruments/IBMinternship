@@ -29,27 +29,73 @@ COPY database/schema.sql /app/schema.sql
 COPY database/seed.sql /app/seed.sql
 COPY database/seed_market_prices.sql /app/seed_market_prices.sql
 
-# Create custom startup script
+# Create custom non-root startup script for MySQL + Spring Boot
 RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+echo "Setting up custom MySQL directories..."\n\
+mkdir -p /app/mysql/data\n\
+mkdir -p /app/mysql/run\n\
+\n\
+# Generate custom my.cnf to use writable directories\n\
+cat << EOF > /app/mysql/my.cnf\n\
+[mysqld]\n\
+datadir=/app/mysql/data\n\
+socket=/app/mysql/mysql.sock\n\
+pid-file=/app/mysql/mysql.pid\n\
+log-error=/app/mysql/mysql.err\n\
+tmpdir=/tmp\n\
+secure_file_priv=""\n\
+port=3306\n\
+bind-address=127.0.0.1\n\
+mysqlx=OFF\n\
+EOF\n\
+\n\
+# Initialize MySQL if the data directory is empty\n\
+if [ ! -d "/app/mysql/data/mysql" ]; then\n\
+    echo "Initializing MySQL data directory..."\n\
+    mysqld --defaults-file=/app/mysql/my.cnf --initialize-insecure\n\
+fi\n\
+\n\
 echo "Starting MySQL..."\n\
-usermod -d /var/lib/mysql/ mysql\n\
-find /var/lib/mysql -type f -exec touch {} + \n\
-service mysql start\n\
+mysqld --defaults-file=/app/mysql/my.cnf &\n\
 \n\
-echo "Initializing database schema..."\n\
-mysql -e "CREATE DATABASE IF NOT EXISTS farmer_assistant;"\n\
-mysql -e "CREATE USER IF NOT EXISTS '\''farmer'\''@'\''%'\'' IDENTIFIED BY '\''farmer123'\'';"\n\
-mysql -e "GRANT ALL PRIVILEGES ON farmer_assistant.* TO '\''farmer'\''@'\''%'\'';"\n\
-mysql -e "FLUSH PRIVILEGES;"\n\
+# Wait for MySQL to start up\n\
+echo "Waiting for MySQL to start..."\n\
+for i in {1..30}; do\n\
+    if mysqladmin --socket=/app/mysql/mysql.sock ping >/dev/null 2>&1; then\n\
+        echo "MySQL is running!"\n\
+        break\n\
+    fi\n\
+    sleep 1\n\
+done\n\
 \n\
-echo "Applying schemas and seeds..."\n\
-mysql farmer_assistant < /app/schema.sql\n\
-mysql farmer_assistant < /app/seed.sql\n\
-mysql farmer_assistant < /app/seed_market_prices.sql\n\
+# Initialize database schema and seeds if not already done\n\
+if ! mysql --socket=/app/mysql/mysql.sock -e "use farmer_assistant;" >/dev/null 2>&1; then\n\
+    echo "Creating database and user..."\n\
+    mysql --socket=/app/mysql/mysql.sock -e "CREATE DATABASE farmer_assistant;"\n\
+    mysql --socket=/app/mysql/mysql.sock -e "CREATE USER '\''farmer'\''@'\''localhost'\'' IDENTIFIED BY '\''farmer123'\'';"\n\
+    mysql --socket=/app/mysql/mysql.sock -e "GRANT ALL PRIVILEGES ON farmer_assistant.* TO '\''farmer'\''@'\''localhost'\'';"\n\
+    mysql --socket=/app/mysql/mysql.sock -e "FLUSH PRIVILEGES;"\n\
+\n\
+    echo "Importing schema..."\n\
+    mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/schema.sql\n\
+    echo "Importing seeds..."\n\
+    mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed.sql\n\
+    mysql --socket=/app/mysql/mysql.sock farmer_assistant < /app/seed_market_prices.sql\n\
+    echo "Database initialization complete!"\n\
+fi\n\
 \n\
 echo "Starting Spring Boot application..."\n\
-java -jar app.jar\n\
+export SPRING_DATASOURCE_URL="jdbc:mysql://localhost:3306/farmer_assistant?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true"\n\
+export SPRING_DATASOURCE_USERNAME="farmer"\n\
+export SPRING_DATASOURCE_PASSWORD="farmer123"\n\
+\n\
+exec java -jar app.jar\n\
 ' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+# Ensure the /app directory has correct permissions
+RUN chmod -R 777 /app
 
 EXPOSE 8080
 

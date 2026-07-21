@@ -83,8 +83,8 @@ done\n\
 if ! /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "use farmer_assistant;" >/dev/null 2>&1; then\n\
     echo "Creating database and user..."\n\
     /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "CREATE DATABASE farmer_assistant;"\n\
-    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "CREATE USER '\''farmer'\''@'\''localhost'\'' IDENTIFIED BY '\''farmer123'\'';"\n\
-    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "GRANT ALL PRIVILEGES ON farmer_assistant.* TO '\''farmer'\''@'\''localhost'\'';"\n\
+    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "CREATE USER '\''farmer'\''@'\''%'\'' IDENTIFIED BY '\''farmer123'\'';"\n\
+    /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "GRANT ALL PRIVILEGES ON farmer_assistant.* TO '\''farmer'\''@'\''%'\'';"\n\
     /usr/bin/mysql --socket=/app/mysql/mysql.sock -e "FLUSH PRIVILEGES;"\n\
 \n\
     echo "Importing schema..."\n\

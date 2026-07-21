@@ -54,11 +54,11 @@ EOF\n\
 # Initialize MySQL if the data directory is empty\n\
 if [ ! -d "/app/mysql/data/mysql" ]; then\n\
     echo "Initializing MySQL data directory..."\n\
-    /usr/sbin/mysqld --no-defaults --defaults-file=/app/mysql/my.cnf --initialize-insecure\n\
+    /usr/sbin/mysqld --defaults-file=/app/mysql/my.cnf --no-defaults --initialize-insecure\n\
 fi\n\
 \n\
 echo "Starting MySQL..."\n\
-/usr/sbin/mysqld --no-defaults --defaults-file=/app/mysql/my.cnf &\n\
+/usr/sbin/mysqld --defaults-file=/app/mysql/my.cnf --no-defaults &\n\
 \n\
 # Wait for MySQL to start up\n\
 echo "Waiting for MySQL to start..."\n\
